@@ -38,28 +38,10 @@
 		</div>
 
 		<script type="text/javascript" src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>
+		<script type="text/javascript" src="modules/util.js"></script>
 		<script type="text/javascript">
 
-<!-- clone一个对象 -->
-	function clone(o){
-		var F=function(){};
-		F.prototype=o;
-		var f=new F();
-
-		var ps=Object.getOwnPropertyNames(o);
-		for(var i=0;i<ps.length;i++){
-			var t=ps[i];
-			f[t]=o[t];
-		}
-		return f;
-	}
-<!-- 按照prop比较两个对象是否“相等” -->
-	function compare(o1,o2,prop){
-		if(!o1[prop] || !o2[prop]) return false;
-		return o1[prop]===o2[prop];
-	}
-<!-- xxxxxxxxxx -->
-
+		<!--      数据部分         -->
 			var allItems=[
 			{_id:1,name:"javascript good parts",price:46.10,count:1,img:"goodparts.jpg"},
 			{_id:2,name:"javascript definitive guid",price:99.50,count:1,img:"definitive.jpg"},
@@ -69,33 +51,16 @@
 			var cart=[
 			
 			];
+		<!--      数据部分         -->
 
 
 
+		/*  ----------主模块，依赖于util模块（自定义）--------------------    */
 
-			var main=angular.module("main",[]);
+			var main=angular.module("main",["util"]);
 
-			main.controller("showController",function($scope){
-				$scope.allItems=allItems;
-				$scope.orderItem=function(index){
-					var si=$scope.allItems[index];
-					var isExist=$scope.cart.some(function(item){
-						return compare(si,item,"_id");
-					});
-					if(!isExist)
-					$scope.cart.push(clone(si));
-				}
-
-			});
-
-
-
-
-
-
-			
+		/*-------------------主控制器----------------------------------*/
 			main.controller("cartController",function($scope){
-				
 				$scope.cart=cart;
 
 				$scope.removeItem=function(index){
@@ -118,6 +83,26 @@
 					$scope.total=nv;
 				},true);
 			});
+
+
+
+			/*----------------------显示商品用的控制器------------------------*/
+
+			main.controller("showController",function($scope,utilService){
+				$scope.allItems=allItems;
+				$scope.orderItem=function(index){
+					var si=$scope.allItems[index];
+					var isExist=$scope.cart.some(function(item){
+						return utilService.compare(si,item,"_id");
+					});
+					if(!isExist)
+					$scope.cart.push(utilService.clone(si));
+				}
+
+			});
+
+			
+			
 
 
 
