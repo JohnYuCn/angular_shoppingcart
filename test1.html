@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div a1="john">
+<ul>
+<li>a</li>
+</ul>
+</div>
+<img src="images/home.jpg"/>
+<button id="test">test</button>
+
+<table id="users">
+	
+</table>
+<script type="text/javascript">
+	
+
+	(function(){
+		var tb=document.getElementById("users");
+
+	
+	function createXhr(){
+		var xhr=new XMLHttpRequest();
+		return xhr;
+	}
+	function callback(){
+	
+		if(this.readyState==4){
+			if(this.status==200){
+				var user=eval("("+xhr.responseText+")");
+				tb.appendChild(createTr(user));
+			}
+		}
+	}
+	function createTr(user){
+		var tr=document.createElement("tr");
+		var td0=tr.insertCell(0);
+		var td1=tr.insertCell(1);
+		td0.innerHTML=user.name;
+		td1.innerHTML=user.age+"";
+		return tr;
+	}
+
+
+
+	var test=document.getElementById("test");
+	test.onclick=function(){
+		var x=Math.random();
+		xhr=createXhr();
+		xhr.onreadystatechange=callback;
+		xhr.open("GET","user?t="+x);
+		xhr.send(null);
+	}
+		
+	})();
+	
+
+
+</script>
+</body>
+</html>

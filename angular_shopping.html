@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8"/>
+		<style type="text/css">
+			.clear{
+				clear:both;
+				margin-bottom: 20px;
+			}
+			.item_show{
+				
+				float: left;
+			}
+		</style>
+	</head>
+	<body ng-app="main" ng-controller="cartController">
+		<div ng-controller="showController">
+			<div class="item_show" ng-repeat="item in allItems">
+				<img src="images/{{item.img}}"><br>
+				<input ng-model=item.count type="number">
+				<button ng-click="orderItem($index)">订购</button>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+
+		<div >
+			<h3>购物车</h3>
+			<table>
+				<tr ng-repeat="item in cart">
+					<td>{{item.name}}</td>
+					<td>{{item.price}}</td>
+					<td><input ng-model="item.count" type="number"/></td>
+					<td><button ng-click="removeItem($index)">delete</button></td>
+				</tr>
+			</table>
+			<span>总价格：{{total}}</span>
+		</div>
+
+		<script type="text/javascript" src="http://cdn.bootcss.com/angular.js/1.5.7/angular.js"></script>
+		<script type="text/javascript">
+
+<!-- clone一个对象 -->
+	function clone(o){
+		var F=function(){};
+		F.prototype=o;
+		var f=new F();
+
+		var ps=Object.getOwnPropertyNames(o);
+		for(var i=0;i<ps.length;i++){
+			var t=ps[i];
+			f[t]=o[t];
+		}
+		return f;
+	}
+<!-- 按照prop比较两个对象是否“相等” -->
+	function compare(o1,o2,prop){
+		if(!o1[prop] || !o2[prop]) return false;
+		return o1[prop]===o2[prop];
+	}
+<!-- xxxxxxxxxx -->
+
+			var allItems=[
+			{_id:1,name:"javascript good parts",price:46.10,count:1,img:"goodparts.jpg"},
+			{_id:2,name:"javascript definitive guid",price:99.50,count:1,img:"definitive.jpg"},
+			{_id:3,name:"AngularJS up&running",price:73.50,count:1,img:"angularjsup.jpg"},
+			];
+
+			var cart=[
+			
+			];
+
+
+
+
+			var main=angular.module("main",[]);
+
+			main.controller("showController",function($scope){
+				$scope.allItems=allItems;
+				$scope.orderItem=function(index){
+					var si=$scope.allItems[index];
+					var isExist=$scope.cart.some(function(item){
+						return compare(si,item,"_id");
+					});
+					if(!isExist)
+					$scope.cart.push(clone(si));
+				}
+
+			});
+
+
+
+
+
+
+			
+			main.controller("cartController",function($scope){
+				
+				$scope.cart=cart;
+
+				$scope.removeItem=function(index){
+					$scope.cart.splice(index,1);
+				}
+
+				$scope.totalCart=function(){
+					var total=0;
+					for(var i=0;i<$scope.cart.length;i++){
+						total+=$scope.cart[i].price*$scope.cart[i].count;
+					}
+					return total;
+				}
+
+
+				$scope.$watch($scope.totalCart,function(nv,old,scope){
+					
+					
+					
+					$scope.total=nv;
+				},true);
+			});
+
+
+
+		</script>
+	</body>
+</html>

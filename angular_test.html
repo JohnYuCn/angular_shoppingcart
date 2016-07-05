@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body ng-app="main" ng-controller="Mc">
+	<input ng-model="user.id" />
+	<input ng-model="user.uname" />
+	<input ng-model="user.age"/><br>
+	<button ng-click="login(user.id)">test</button>
+	<button ng-click="test()">test1</button>
+	
+	<script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>
+	<script type="text/javascript" src="lib/angular/angular.min.js"></script>
+	<script type="text/javascript">
+		var mainModule=angular.module("main",[]);
+		mainModule.controller("Mc",function($scope,$http){
+			var user={id:21,uname:"john"};
+			$scope.user=user;
+			$scope.login=function(id){
+				var req = {
+					method: 'POST',
+					url: 'about/'+id,
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					data: $scope.user
+				};
+				$http(req).then(function(res){alert(res.data.message)}, function(err){});
+			};
+			$scope.test=function(){
+				var req={method:'POST',url:'/test/100',data:{name:'john'}};
+				$http(req).then(function(res){
+					alert(res.data);
+				});
+			}
+			
+		});
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+	
+</style>
+</head>
+
+<!--控制器绑定到模板-->
+<body ng-controller="Mc">
+
+	<div id="left" >
+	<input  type="text" ng-model="user._id"><br/>
+	<input  type="text" ng-model="user.uname"><br/>
+	<input type="text" ng-model="user.age"><br/>
+	<button ng-click="add()">test</button>
+	<button ng-click="put()">put</button>
+	<button ng-click="delete()">delete</button>
+	<a href="#/about">show</a><a href="#/">unshow</a>
+
+	<li ng-repeat="u in us">
+	<span ng-bind='u.uname'></span>,{{u.age}}<button ng-click="delete(u._id)">del</button>
+	<button ng-click="select(u._id)">select</button>
+	</li>
+</div>
+<div id="right" ng-view></div>
+
+</body>
+<script type="text/javascript" src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/angular/angular.js"></script>
+<script src="/lib/angular-route/angular-route.js"></script>
+<script type="text/javascript">
+
+	
+	
+	//手工引导模块
+
+	//模块依赖关系
+	var mainModuel=angular.module("main",["ngRoute"]);
+
+	//定义controller
+	mainModuel.controller("Mc",function($scope,$http){
+		
+		$http.get('/users').success(function(data,status,header,config){
+			
+			$scope.us=data;
+			$scope.user=$scope.us[0];
+			
+		});
+		$scope.add=function(){
+
+			$http.post('/users',$scope.user).success(function(data){
+
+				$scope.us.push(data);
+				$scope.user=data;
+			});
+		}
+		$scope.put=function(){
+
+			$http.put("/users",$scope.user).success(function(data){
+				$scope.us.forEach(function(item){
+
+					if(item._id==$scope.user._id){
+						item.uname=$scope.user.uname;
+						item.age=$scope.user.age;
+					}
+				})
+			});
+		}
+		$scope.delete=function(id){
+
+			$http.delete("/users",{params:{id:id}}).success(function(data){
+				for(var i=0;i<$scope.us.length;i++){
+					if($scope.us[i]._id==id) break;
+				}
+				$scope.us.splice(i,1);
+				if($scope.us[0]) $scope.user=$scope.us[0];
+
+			});
+		}
+		$scope.select=function(id){
+
+			$scope.us.forEach(function(item){
+				if(id==item._id){
+					
+					$scope.user=item;
+					return;
+				}
+			});
+		}
+		
+	});
+
+
+	mainModuel.config(function($routeProvider){
+
+		$routeProvider.when("/",{template:"please input..."})
+		.when("/about",{templateUrl:'t1.html'})
+		.otherwise({redirectTo:'/'});
+	});
+	angular.element(document).ready(function(){
+		angular.bootstrap(document.body,["main"]);
+	});
+	//angular.element("#xx").ready(function(){alert("ttt....");});
+
+	
+</script>
+</html>

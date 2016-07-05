@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+	
+</style>
+</head>
+<body ng-app="Mc" ng-controller="xx">
+{{name}},{{food}}
+<button ng-click="say()">test</button>
+
+<script type="text/javascript" src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/angular/angular.js"></script>
+<script src="/lib/angular-route/angular-route.js"></script>
+<script type="text/javascript">
+	var mc=angular.module("Mc",[]);
+	//服务”实例化“,服务对象名字为：Foods,值为KFC
+	mc.factory("Foods",function(){
+		return "KFC";
+	});
+	//服务”实例化“,服务对象名字为：Items,并DI Foods
+	mc.service("Items",function(Foods){
+		this.name="JohnYu23";
+
+		this.food=Foods;
+		this.say=function(){alert("hello.")};
+	});
+	//依赖注入DI进Items
+	mc.controller("xx",function($scope,Items){
+
+		$scope.name=Items.name;
+		$scope.food=Items.food;
+		$scope.say=Items.say;
+	});
+
+	
+
+
+
+</script>
+</body>
+</html>;
